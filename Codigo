@@ -1,0 +1,172 @@
+package com.mycompany.laboratoriotrabajoconarchivos;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author casti
+ */
+public class Source {
+
+    
+    private void EsctrituraSeparador(String nombre, byte edad, Integer telefono)
+    {    byte espacio = '|';
+        try {
+            RandomAccessFile archivo = new RandomAccessFile("Agenda.bin","rw");
+            archivo.seek(archivo.length());
+            archivo.writeUTF(nombre);
+            archivo.writeByte(edad);
+            archivo.writeInt(telefono);
+            archivo.writeByte(espacio);
+            archivo.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Source.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Source.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+    }
+    private void ArchivoLectura()
+    {
+        try {
+            RandomAccessFile archivo = new RandomAccessFile("Agenda.bin","r");
+            
+            String nombreN;
+            byte[] espacio = new byte[1];
+            byte nombre[] = new byte[30];
+            byte edad=0;
+            int telefono=0;
+            boolean registros=true;
+
+            while(registros==true)
+            {
+                try
+                {
+              nombreN = archivo.readUTF();
+          
+              edad = archivo.readByte();
+              telefono = archivo.readInt();
+              archivo.read(espacio);
+                System.out.println("Nombre: " + new String(nombreN));
+                System.out.println("Edad: " + edad);
+                System.out.println("Telefono: " + telefono);
+                } catch (IOException ex) {
+                   registros = false;
+                   }
+            }
+            archivo.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Source.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Source.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    private void SeparadorDeTamanioDeLaEscrtritura(String nombre, byte edad, Integer telefono)
+    {
+        try {
+            RandomAccessFile archivo = new RandomAccessFile("Agenda1.bin","rw");
+            archivo.seek(archivo.length());
+            archivo.writeBytes(nombre);
+            archivo.writeByte(edad);
+            archivo.writeInt(telefono);
+            archivo.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Source.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Source.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+    }
+    private void SeparadorDeLecturaTamanio()
+    {
+        try {
+            RandomAccessFile archivo = new RandomAccessFile("Agenda1.bin","r");
+            
+            byte nombre[] = new byte[30];
+            byte edad=0;
+            int telefono=0;
+            while(archivo.read(nombre) != -1){
+                edad = archivo.readByte();
+                telefono = archivo.readInt();
+                
+                System.out.println("Nombre: " + new String(nombre));
+                System.out.println("Edad: " + edad);
+                System.out.println("Telefono: " + telefono);
+            }
+
+            archivo.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Source.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Source.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+     Scanner scan = new Scanner(System.in);
+     
+     Source source  = new Source();
+        char[] nombre = new char[30];
+        for(int i=0;i < 30;i++){
+           nombre[i] = '0';
+        }
+        byte op;
+        
+        do{
+            Scanner scanm = new Scanner(System.in);
+            System.out.println("-------- Menu Agenda --------");
+            System.out.println("1.Ingresar datos");
+            System.out.println("2.Ver datos");
+            System.out.println("3.S A L I R");
+            System.out.println("Ingrese la opcion que desee:");
+            op = scanm.nextByte();
+            
+            
+            switch(op)
+            {
+                case 1:
+              
+                System.out.println("Ingrese los siguientes datos");
+                System.out.println("N O M B R E: ");
+                String nom = scan.nextLine();
+                String nomD;
+                char[] nomb = new char[nom.length()];
+                for(int i=0;i<nom.length();i++){
+                    nombre[i] = nom.charAt(i);
+                    nomb[i] = nom.charAt(i);
+                }
+                nomD = String.valueOf(nomb);
+                nom = String.valueOf(nombre);
+                System.out.println("T E L E F O N O:  ");
+                Integer telefono = scan.nextInt();
+                System.out.println("E D A D: ");
+                byte edad = scan.nextByte();
+                source.EsctrituraSeparador(nomD, edad, telefono);
+                source.SeparadorDeTamanioDeLaEscrtritura(nom, edad, telefono);
+                System.out.println("A L M A C E N A D O S "); 
+                break;
+                    
+                case 2:
+      
+                System.out.println("DATOS SEPARADOR T A M A Ñ O : ");
+                source.SeparadorDeLecturaTamanio();
+                System.out.println("DATOS SEPARADOR B I N A R I O: ");
+                source.ArchivoLectura();
+                
+                break;
+                   
+            }       
+        System.out.println("");
+        }while(op != 3);
+    }
+
+    
+}
